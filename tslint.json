@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "./tslint-shared-rules.json"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "src/localization/**/*"
+    ]
+  },
+  "rules": {
+    "no-require-imports": false,
+    "no-var-requires": false
+  }
+}
