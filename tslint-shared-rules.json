@@ -199,7 +199,7 @@
      "ter-no-mixed-spaces-and-tabs": true,
      "object-curly-spacing": "always",
      "ter-indent": [true, 2, { "SwitchCase": 1 }],
-     "linebreak-style": [true, "CRLF"],
+     "linebreak-style": 0,
      "encoding": true
   }
 }
