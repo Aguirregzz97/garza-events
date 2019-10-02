@@ -4,6 +4,7 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import * as React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import './../assets/scss/App.scss'
+import { EventRegistration } from './EventRegistration'
 import { Home } from './Home'
 type State = {
   currentSeason: string
@@ -19,6 +20,7 @@ export class App extends React.Component<Props, State> {
         <main>
           <Switch>
             <Route exact={ true } path='/' component={ Home } />
+            <Route path='/event-registration' component={ EventRegistration } />
           </Switch>
         </main>
       </div>
