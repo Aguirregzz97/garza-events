@@ -1,5 +1,4 @@
 import * as React from 'react'
-const logo128 = require('../assets/img/logoGrande.png')
 type State = {
 }
 
