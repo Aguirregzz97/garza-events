@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { InitialScreen } from './InitialScreen'
+//import { EventRegistration } from './EventRegistration'
+import { Login } from './Login'
 
 type State = {
 }
@@ -15,7 +17,13 @@ export class Home extends React.Component<Props, State> {
 
   render() {
     return (
-        <InitialScreen />
+      <>
+        <InitialScreen />                    
+        <Login />
+      </>
+      
+      
+        
     )
   }
 }
