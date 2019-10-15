@@ -10,3 +10,8 @@ export type FormModel = {
   instalationSchedule: string,
   specialNotes: string,
 }
+
+export type LoginForm = {
+  username: string,
+  password: string,
+}
