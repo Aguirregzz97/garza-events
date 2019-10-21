@@ -1,14 +1,36 @@
-export type FormModel = {
+export type Event = {
   clientName: string,
-  clientPhone: string,
-  clientAddress: string,
-  eventDate: string,
-  eventSchedule: string,
-  danceFloor: string,
-  loungeEquipment: boolean,
-  ilumination: string,
-  instalationSchedule: string,
-  specialNotes: string,
+  address: string,
+  cellphone: string,
+  date: string,
+  startHour: string,
+  endHour: string,
+  pricePerHour: number,
+  totalPrice: number,
+  totalCost: number,
+  providers: Service[],
+}
+
+export type ServiceToUI = {
+  name: string,
+  selectValues: {[key: string]: number[]}
+}
+
+export type ServiceToDisplay = {
+  type: string,
+  description: string,
+  price: number,
+  cost: number,
+}
+
+export type Service = {
+  type: string,
+  providerName: string,
+  cost: number,
+  price: number,
+  description: string,
+  instalationHour: string,
+  notes: string,
 }
 
 export type LoginForm = {
