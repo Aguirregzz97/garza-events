@@ -1,16 +1,93 @@
 import * as React from 'react'
-import { FormModel } from '../shared/types'
+import { Event, Service, ServiceToDisplay, ServiceToUI } from '../shared/types'
 import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox'
-import './../assets/scss/mobileForms.scss'
+import styled from 'styled-components'
+import { getServices } from '../shared/RestApi'
+
+const Container = styled.div`
+  background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
+  paddingBottom: '500px';
+`
+const EventRegistrationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  font-family: 'Roboto';
+`
+const FormRect = styled.div`
+  border-radius: 4px;
+  margin-top: 100px;
+  margin-bottom: 100px;
+  width: 70%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  padding-right: 50px;
+  padding-left: 50px;
+  position: sticky;
+
+  @media only screen and (max-width: 700px) {
+    width: 90%;
+  } 
+`
+const HeadingForms = styled.h1`
+  color: black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  @media only screen and (max-width: 700px) {
+    font-size: 30px;
+  } 
+`
+const SubmitButton = styled.button`
+  margin-top: 20px;
+  width: 40%;
+  font-family: roboto;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff;
+  height: 55px;
+  border-radius: 3px;
+  background: #0B4163;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 25px;
+  -o-transition: all .4s;
+  -moz-transition: all .4s;
+  transition: all .4s;
+
+  &:hover {
+    cursor: pointer;
+    background: #333333;
+  }
+`
+const ServicesHeading = styled.h2`
+  padding-top: 10px;
+
+  @media only screen and (max-width: 700px) {
+    font-size: 30px;
+  } 
+`
+const ServiceBox = styled.div`
+  padding: 15px;
+  border: 3px solid #0B4163;
+  margin-bottom: 20px;
+  border-radius: 10px;
+`
+const PriceHeading = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  font-family: roboto;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 25px;
+`
 
 type State = {
-  formModel: FormModel | any,
-  startHour: string,
-  endHour: string,
-  iluminacion1: boolean,
-  iluminacion2: boolean,
+  event: Event | any,
+  servicesToUi: ServiceToUI[]
 }
 
 type Props = {
@@ -21,130 +98,174 @@ export class EventRegistration extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      formModel: undefined,
-      startHour: '',
-      endHour: '',
-      iluminacion1: false,
-      iluminacion2: false,
+      event: undefined,
+      servicesToUi: [],
     }
   }
 
-  componentDidMount() {
-    let x: FormModel = { ...this.state.formModel }
+  async componentDidMount() {
+    let x: Event = { ...this.state.event }
     x.clientName = ''
-    x.clientPhone = ''
-    x.clientAddress = ''
-    x.eventDate = ''
-    x.eventSchedule = ''
-    x.danceFloor = ''
-    x.loungeEquipment = false
-    x.ilumination = ''
-    x.instalationSchedule = ''
-    x.specialNotes = ''
-    this.setState({
-      formModel: x
+    x.cellphone = ''
+    x.address = ''
+    x.date = ''
+    x.startHour = ''
+    x.endHour = ''
+    x.pricePerHour = 0
+    x.totalPrice = 0
+    x.totalCost = 0
+    x.providers = this.getArrServices()
+
+    let servicesToUi: ServiceToUI[] = this.getServicesToUi()
+
+    await this.setState({
+      event: x,
+      servicesToUi: servicesToUi,
     })
   }
 
+  getServicesToUi = (): ServiceToUI[] => {
+    let servicesToDisplay: ServiceToDisplay[] = getServices()
+    let types: string[] = this.getTypes(servicesToDisplay)
+    let servicesToUI: ServiceToUI[] = []
+
+    types.forEach(element => {
+      let serviceToUi: ServiceToUI = {
+        name: element,
+        selectValues: {},
+      }
+      servicesToUI.push(serviceToUi)
+    })
+
+
+    servicesToDisplay.forEach(element => {
+      for (const serviceToUI of servicesToUI) {
+        if (serviceToUI.name === element.type) {
+          serviceToUI.selectValues[element.description] = [element.price, element.cost]
+        }
+      }
+    })
+    return servicesToUI
+  }
+
+  getArrServices = (): Service[] => {
+    let servicesToDisplay: ServiceToDisplay[] = getServices()
+    let types: string[] = this.getTypes(servicesToDisplay)
+    let services: Service[] = []
+
+    types.forEach(element => {
+      let service: Service = {
+        type: element,
+        providerName: '',
+        cost: 0,
+        price: 0,
+        description: '',
+        instalationHour: '',
+        notes: '',
+      }
+      services.push(service)
+    })
+    return services
+  }
+
+  getTypes = (servicesUnformatted : ServiceToDisplay[]) => {
+    const uniqueTypes: string[] = [...new Set(servicesUnformatted.map((item : ServiceToDisplay) => item.type))]
+    return uniqueTypes
+  }
+
   handleInputChange  = (paramName: string) => (event: any) => {
-    let newForm: any = { ...this.state.formModel }
+    let newForm: any = { ...this.state.event }
     newForm[paramName] = event.target.value
     this.setState({
-      formModel: newForm
+      event: newForm
     })    
   }
 
   handleDateChange = (paramName: string) => (event: any) => {
-    let newForm: any = { ...this.state.formModel }
+    let newForm: any = { ...this.state.event }
     newForm[paramName] = event.toLocaleDateString()
     this.setState({
-      formModel: newForm
+      event: newForm
     })    
   }
 
-  handleFromChange = (paramName: string) => async (event: any) => {
+  handleFromChange = async (e: any) => {
+    let event: Event = this.state.event
+    event.startHour = e.target.value
     await this.setState({
-      startHour: event.target.value
-    }, async () => {
-      let newForm: any = { ...this.state.formModel }
-      if (this.state.endHour != '') {
-        newForm[paramName] = `${this.state.startHour} to ${this.state.endHour}`
-        await this.setState({
-          formModel: newForm
-        })
+      event: event,
+    })
+  }
+
+  handleToChange = async (e: any) => {
+    let event: Event = this.state.event
+    event.endHour = e.target.value
+    await this.setState({
+      event: event,
+    })
+  }
+
+  handleServicePlanChange = (type: string, hashMap: {[key: string]: number[]}) => async (event: any) => {
+    let newFormModel: Event = this.state.event
+    for (const service of newFormModel.providers) {
+      if (service.type === type) {
+        service.description = event.target.value
+        service.price = hashMap[event.target.value][0]
+        service.cost = hashMap[event.target.value][1]
+        break
       }
+    }
+    let priceTmp = 0
+    let costTmp = 0
+    for (const service of this.state.event.providers) {
+      priceTmp += service.price
+      costTmp += service.cost
+    }
+    console.log(console.log(costTmp))
+    newFormModel.totalPrice = priceTmp
+    newFormModel.totalCost = costTmp
+    await this.setState({
+      event: newFormModel,
+    })
+  }
+
+  handleServiceHourChange = (type: string) => async (event: any) => {
+    let newFormModel: Event = this.state.event
+    for (const service of newFormModel.providers) {
+      if (service.type === type) {
+        service.instalationHour = event.target.value
+        break
+      }
+    }
+    await this.setState({
+      event: newFormModel,
+    })
+  }
+
+  handleServiceNotesChange = (type: string) => async (event: any) => {
+    let newFormModel: Event = this.state.event
+    for (const service of newFormModel.providers) {
+      if (service.type === type) {
+        service.notes = event.target.value
+        break
+      }
+    }
+    await this.setState({
+      event: newFormModel,
     }) 
   }
 
-  handleToChange = (paramName: string) => async (event: any) => {
-    await this.setState({
-      endHour: event.target.value
-    }, async () => {
-      let newForm: any = { ...this.state.formModel }
-      if (this.state.startHour != '') {
-        newForm[paramName] = `${this.state.startHour} to ${this.state.endHour}`
-        await this.setState({
-          formModel: newForm
-        })
-      }
-    })  
-  }
-
-  handleSalitasChange = (ev: React.FormEvent<HTMLElement>, isChecked: boolean): void  => {
-    console.log(ev)
-    let newForm: FormModel = { ...this.state.formModel }
-    newForm.loungeEquipment = isChecked
-    this.setState({
-      formModel: newForm
-    })
-  }
-
-  handleIluminacion1Change = async ()  => {
-    this.setState({
-      iluminacion1: !this.state.iluminacion1,
-      iluminacion2: false
-    }, async () => {
-      let newForm: FormModel = { ...this.state.formModel }
-      if (this.state.iluminacion1) {
-        newForm.ilumination = 'paquete 1'
-      } else {
-        newForm.ilumination = ''
-      }
-      await this.setState({
-        formModel: newForm
-      })
-    })
-  }
-
-  handleIluminacion2Change = async ()  => {
-    await this.setState({
-      iluminacion1: false,
-      iluminacion2: !this.state.iluminacion2
-    }, async () => {
-      let newForm: FormModel = { ...this.state.formModel }
-      if (this.state.iluminacion2) {
-        newForm.ilumination = 'paquete 2'
-      } else {
-        newForm.ilumination = ''
-      }
-      await this.setState({
-        formModel: newForm
-      })
-    })
-  }
-
   submittedForm = () => {
-    let json = JSON.stringify(this.state.formModel)
+    let json = JSON.stringify(this.state.event, null, 2)
     alert(json)
   }
 
   render() {
-    return (
-      <div>
-        <div id='blue-bar'></div>
-        <div id='event-registration-container'>
-          <div id='form-rect'>
-            <h1 id='title-forms' style={{ color: 'black', paddingTop: '10px', paddingBottom: '10px' }}>Registro de evento</h1>
+    return ( 
+      <Container>
+        <EventRegistrationContainer>
+          <FormRect>
+            <HeadingForms>Registro de evento</HeadingForms>
             <form onSubmit={ this.submittedForm }>
               <div className='form-group'>
                 <label>Nombre</label>
@@ -152,11 +273,11 @@ export class EventRegistration extends React.Component<Props, State> {
               </div>
               <div className='form-group'>
                 <label>Teléfono</label>
-                <input onChange={ this.handleInputChange('clientPhone')} className='form-control' placeholder='Teléfono' />
+                <input onChange={ this.handleInputChange('cellphone')} className='form-control' placeholder='Teléfono' />
               </div>
               <div className='form-group'>
                 <label>Dirección de evento</label>
-                <input onChange={ this.handleInputChange('clientAddress')} className='form-control' placeholder='Dirección' />
+                <input onChange={ this.handleInputChange('address')} className='form-control' placeholder='Dirección' />
               </div>
               <div className='form-group'>
                 <label>Fecha</label>
@@ -178,13 +299,14 @@ export class EventRegistration extends React.Component<Props, State> {
                     }
                   }}
                     format={'MM/dd/yyyy'}
-                    onDayChange={ this.handleDateChange('eventDate') } />
+                    onDayChange={ this.handleDateChange('date') } />
                 </div>
               </div>
               <div className='form-row'>
                 <div className='col-md-4'>
                   <label>De</label>
-                  <select onChange={ this.handleFromChange('eventSchedule') } className='form-control ' placeholder='Horario de evento'>
+                  <select onChange={ this.handleFromChange } className='form-control ' placeholder='Horario de evento'>
+                    <option disabled selected> -- selecciona una opcion -- </option>
                     <option>12:00 PM</option>
                     <option>1:00 PM</option>
                     <option>2:00 PM</option>
@@ -204,7 +326,8 @@ export class EventRegistration extends React.Component<Props, State> {
                 </div>
                 <div className='col-md-4'>
                   <label>A</label>
-                  <select onChange={ this.handleToChange('eventSchedule') } className='form-control ' placeholder='Horario de evento'>
+                  <select onChange={ this.handleToChange } className='form-control' placeholder='Horario de evento'>
+                    <option disabled selected> -- selecciona una opcion -- </option>
                     <option>12:00 PM</option>
                     <option>1:00 PM</option>
                     <option>2:00 PM</option>
@@ -223,58 +346,54 @@ export class EventRegistration extends React.Component<Props, State> {
                   </select>
                 </div>
               </div>
-              <div className='form-row'>
-                <div className='col-md-4'>
-                  <label style={{ marginTop: '20px' }}>Pista de baile</label>
-                  <select onChange={ this.handleInputChange('danceFloor') } id='inputState' className='form-control'>
-                    <option>ninguna</option>
-                    <option>3x3</option>
-                    <option>3x4</option>
-                    <option>4x4</option>
-                    <option>4x5</option>
-                    <option>5x5</option>
-                  </select>
-                </div>
-              </div>
-              <div className='form-group'>
-                <Checkbox inputProps={{ style: { marginTop: '15px' } }} label='Salitas Lounge' onChange={ this.handleSalitasChange } />
-              </div>
-              <div className='form-group'>
-                <h5 style={{ marginTop: '20px' }}>Iluminación</h5>
-                <p className='packageDesc'>Paquete 1: $1000 - 2 spots LED, 2 luces robóticas</p>
-                <p className='packageDesc'>Paquete 2: $2000 - 4 spots LED, 4 luces robóticas</p>
-                <Checkbox inputProps={{ style: { marginTop: '15px',  } }} label='paquete 1' onChange={ this.handleIluminacion1Change } checked={ this.state.iluminacion1 }/>
-                <Checkbox inputProps={{ style: { marginTop: '15px', marginBottom: '20px'  } }} label='paquete 2' onChange={ this.handleIluminacion2Change } checked={ this.state.iluminacion2 }/>
-              </div>
-              <div className='form-group'>
-                <label>Hora de instalación</label>
-                <select onChange={ this.handleInputChange('instalationSchedule') } className='form-control' placeholder='Hora de instalacion'>
-                    <option>12:00 PM</option>
-                    <option>1:00 PM</option>
-                    <option>2:00 PM</option>
-                    <option>3:00 PM</option>
-                    <option>4:00 PM</option>
-                    <option>5:00 PM</option>
-                    <option>6:00 PM</option>
-                    <option>7:00 PM</option>
-                    <option>8:00 PM</option>
-                    <option>9:00 PM</option>
-                    <option>10:00 PM</option>
-                    <option>11:00 PM</option>
-                    <option>12:00 AM</option>
-                    <option>1:00 AM</option>
-                    <option>2:00 AM</option>
-                </select>
-              </div>
-              <div className='form-group'>
-                <label>Notas especiales (comentarios)</label>
-                <input onChange={ this.handleInputChange('specialNotes') } className='form-control' placeholder='El evento sera sobre pasto, concreto, etc' />
-              </div>
-              <div className='text-center'><button className='btn btn-primary' id='submit-btn'>Submit</button></div>
+              <ServicesHeading>Servicios</ServicesHeading>
+              {
+                this.state.servicesToUi.map(element => {
+                  return (
+                    <ServiceBox>
+                      <h4>{element.name}</h4>
+                      <label>Escoge un paquete</label>
+                      <select onChange={ this.handleServicePlanChange(element.name, element.selectValues) } style={{ marginBottom: '10px' }} className='form-control'>
+                      <option disabled selected> -- selecciona una opcion -- </option>
+                        {
+                          Object.keys(element.selectValues).map(element => {
+                            return (
+                              <option>{element}</option>
+                            )
+                          })
+                        }
+                      </select>
+                      <label>Hora de instalacion</label>
+                      <select onChange={ this.handleServiceHourChange(element.name) } style={{ marginBottom: '10px' }} className='form-control'>
+                        <option disabled selected> -- selecciona una opcion -- </option>
+                        <option>12:00 PM</option>
+                        <option>1:00 PM</option>
+                        <option>2:00 PM</option>
+                        <option>3:00 PM</option>
+                        <option>4:00 PM</option>
+                        <option>5:00 PM</option>
+                        <option>6:00 PM</option>
+                        <option>7:00 PM</option>
+                        <option>8:00 PM</option>
+                        <option>9:00 PM</option>
+                        <option>10:00 PM</option>
+                        <option>11:00 PM</option>
+                        <option>12:00 AM</option>
+                        <option>1:00 AM</option>
+                        <option>2:00 AM</option>
+                      </select>
+                      <label>Comentarios</label>
+                      <input onChange={ this.handleServiceNotesChange(element.name) } className='form-control' placeholder='El evento sera en pasto, cemento, etc' type='text'/>
+                    </ServiceBox>
+                  )
+                })
+              }
+              <PriceHeading>{ this.state.event === undefined ? "" : `$ ${this.state.event.totalPrice}` }</PriceHeading>
+              <div style={{ display: 'flex', justifyContent: 'center' }} className='text-center'><SubmitButton>Registrar Evento</SubmitButton></div>
             </form>
-          </div>
-        </div>
-      </div>
+          </FormRect>
+        </EventRegistrationContainer>
+      </Container>
     )
   }
 }
