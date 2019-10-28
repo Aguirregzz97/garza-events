@@ -1,4 +1,5 @@
 import { shouldMockApis } from "./shouldMockApis";
+//import { ServiceToDisplay } from "./types";
 
 export function getServices() {
   let res : any
@@ -8,6 +9,20 @@ export function getServices() {
     return res.data.getServices
   } else {
     console.log('here goes fetch')
+/*
+
+    let response = await fetch('http://168.62.52.177:3000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: '{ getServices { type description price cost } }' }),
+    })
+
+    response.json()
+    return response
+*/
+    //.then(res => res.json())
+    //.then(res => console.log(res.data));
+    
   }
 }
 
@@ -17,6 +32,17 @@ export function getEvents() {
     res = '{ "data": { "getEvents": [ { "clientName": "Ricardo", "address": "R", "cellphone": "1111111", "date": "2019-01-01", "startHour": "18:00", "endHour": "21:00", "pricePerHour": "500", "totalPrice": "4000", "totalCost": "3000", "providers": [ { "type": "Iluminacion", "providerName": "proveedor iluminacion", "cost": "1000", "price": "2000", "description": "Iluminación paquete 1 - 2 spots led, 2 luces robóticas", "instalationHour": "10:00 PM", "notes": "This is notes for iluminacion" }, { "type": "PistaIluminada", "providerName": "proveedor pista", "cost": "500", "price": "1000", "description": "Pista 3x3", "instalationHour": "9:00 PM", "notes": "This is notes for pista" } ] }, { "clientName": "Andres", "address": "Camino de los bengalies", "cellphone": "8110223115", "date": "2019-01-01", "startHour": "18:00", "endHour": "21:00", "pricePerHour": "500", "totalPrice": "4000", "totalCost": "3000", "providers": [ { "type": "Iluminacion", "providerName": "proveedor iluminacion", "cost": "1000", "price": "2000", "description": "Iluminación paquete 1 - 2 spots led, 2 luces robóticas", "instalationHour": "10:00 PM", "notes": "This is notes for iluminacion" }, { "type": "PistaIluminada", "providerName": "proveedor pista", "cost": "500", "price": "1000", "description": "Pista 3x3", "instalationHour": "9:00 PM", "notes": "This is notes for pista" } ] } ] } }' 
     res = JSON.parse(res)
     return res.data.getEvents
+  } else {
+    console.log('here goes fetch')
+  }
+}
+
+export function getEvent(/*id*/) {
+  let res : any
+  if (shouldMockApis()) {
+    res = '{ "data": { "getEvent": [ { "clientName": "Ricardo", "address": "R", "cellphone": "1111111", "date": "2019-01-01", "startHour": "18:00", "endHour": "21:00", "pricePerHour": "500", "totalPrice": "4000", "totalCost": "3000", "providers": [ { "type": "Iluminacion", "providerName": "proveedor iluminacion", "cost": "1000", "price": "2000", "description": "Iluminación paquete 1 - 2 spots led, 2 luces robóticas", "instalationHour": "10:00 PM", "notes": "This is notes for iluminacion" }, { "type": "PistaIluminada", "providerName": "proveedor pista", "cost": "500", "price": "1000", "description": "Pista 3x3", "instalationHour": "9:00 PM", "notes": "This is notes for pista" } ] } ] } }'
+    res = JSON.parse(res)
+    return res.data.getEvent[0]
   } else {
     console.log('here goes fetch')
   }

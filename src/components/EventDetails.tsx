@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { getEvents } from '../shared/RestApi'
-import { RingLoaderWrapper } from '../shared/RingLoaderWrapper'
+import { getEvent } from '../shared/RestApi'
 import { Event } from '../shared/types'
+import { RingLoaderWrapper } from '../shared/RingLoaderWrapper'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
@@ -9,7 +9,7 @@ const ContainerBox = styled.div`
   background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
 `
 
-const HomeIcon = styled.div`
+const BackIcon = styled.div`
   color: white;
   font-size: 35px;
   margin: 20px;
@@ -51,10 +51,6 @@ const EventBox = styled.div`
   width: 100%;
   border: 3px #0B4163 solid;
   border-radius: 3px;
-
-  &:hover {
-    cursor: pointer;
-  }
 `
 
 const EventItem = styled.h5`
@@ -63,73 +59,62 @@ const EventItem = styled.h5`
   font-weight: bold;
 `
 
-const StyledLink = styled(Link)`
-    text-decoration: none;
-
-    &:focus, &:hover, &:visited, &:link, &:active {
-        text-decoration: none;
-        color: black;
-    }
-`
-
 type State = {
-  events: Event[] | undefined
+  event: Event | undefined
 }
 
 type Props = {
+
 }
 
-export class Events extends React.Component<Props, State> {
-
+export class EventDetails extends React.Component<Props, State> {
+  
   constructor(props: Props) {
     super(props)
     this.state = {
-      events: undefined
+      event: undefined
     }
   }
 
   async componentDidMount() {
-    let eventsNew: Event[] = getEvents()
+    let eventSelected: Event = getEvent()
     await this.setState({
-      events: eventsNew
+      event: eventSelected
     })
   }
 
   render() {
-    if (this.state.events === undefined) {
+    if (this.state.event === undefined) {
       return ( <RingLoaderWrapper /> )
     }
-    return (
+    return ( 
       <div>
-        {console.log(this.state.events)}
+      {console.log(this.state.event)}
         <ContainerBox>
-          <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
+          <Link to='/events'><BackIcon className='fas fa-arrow-left'></BackIcon></Link>
           <ContainerContainerEvents>
             <ContainerEvents>
-              <EventsHeading>Eventos</EventsHeading>
-              {this.state.events.map((element: Event) => {
-                return (
+              <EventsHeading>Evento</EventsHeading>                                           
                   <div style={{ width: '80%' }}>
-                    <h3 style={{ fontWeight: 'bold' }}>{element.clientName}</h3>
-                    <StyledLink to='/'><EventBox>
+                    <h3 style={{ fontWeight: 'bold' }}>{this.state.event.clientName}</h3>
+                    {console.log(this.state.event.clientName)}                    
+                    <EventBox>
                       <EventItem>Direccion:</EventItem>
-                      <h5>{element.address}</h5>
+                      <h5>{this.state.event.address}</h5>
                       <EventItem>Celular:</EventItem>
-                      <h5>{element.cellphone}</h5>
+                      <h5>{this.state.event.cellphone}</h5>
                       <EventItem>Fecha:</EventItem>
-                      <h5>{element.date}</h5>
+                      <h5>{this.state.event.date}</h5>
                       <EventItem>Hora de inicio:</EventItem>
-                      <h5>{element.startHour}</h5>
+                      <h5>{this.state.event.startHour}</h5>
                       <EventItem>Hora de fin:</EventItem>
-                      <h5>{element.endHour}</h5>
+                      <h5>{this.state.event.endHour}</h5>
                       <EventItem>Costo total:</EventItem>
-                      <h5>{element.totalCost}</h5>
+                      <h5>{this.state.event.totalCost}</h5>
                       <EventItem>Precio total:</EventItem>
-                      <h5>{element.totalPrice}</h5>
-                    </EventBox></StyledLink>
-                  </div>
-                )
-              })}
+                      <h5>{this.state.event.totalPrice}</h5>
+                    </EventBox>
+                  </div>              
             </ContainerEvents>
           </ContainerContainerEvents>
         </ContainerBox>
