@@ -1,4 +1,5 @@
 export type Event = {
+  _id: string,
   clientName: string,
   address: string,
   cellphone: string,
@@ -8,6 +9,7 @@ export type Event = {
   pricePerHour: number,
   totalPrice: number,
   totalCost: number,
+  status: string,
   providers: Service[],
 }
 

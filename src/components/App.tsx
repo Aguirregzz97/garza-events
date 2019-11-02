@@ -7,6 +7,7 @@ import './../assets/scss/App.scss'
 import { EventRegistration } from './EventRegistration'
 import { Events } from './Events'
 import { Home } from './Home'
+import { EventC } from './EventC'
 
 type State = {
   currentSeason: string
@@ -24,6 +25,7 @@ export class App extends React.Component<Props, State> {
             <Route exact={ true } path='/' component={ Home } />
             <Route path='/event-registration' component={ EventRegistration } />
             <Route path='/events' component={ Events } />
+            <Route path='/event/:_id' component={ EventC } />
 
           </Switch>
         </main>
