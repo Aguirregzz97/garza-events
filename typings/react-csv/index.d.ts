@@ -3,3 +3,5 @@ declare module 'react-csv' {
 
   export class CSVLink extends React.Component<{ data: object[], filename: string }> { }
 }
+
+declare module 'react-stonecutter' 
