@@ -90,33 +90,37 @@ export class Events extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    let eventsNew: Event[] = getEvents()
-    await this.setState({
+    let eventsNew: Event[] = await getEvents()
+    this.setState({
       events: eventsNew
     })
   }
 
   render() {
     if (this.state.events === undefined) {
-      return ( <RingLoaderWrapper /> )
+      return (<RingLoaderWrapper />)
     }
     return (
       <div>
-        {console.log(this.state.events)}
         <ContainerBox>
           <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
           <EventsHeading>Events</EventsHeading>
           <ContainerContainerEvents>
-              <GridPage
-                component='ul'
-                columns={5}
-                columnWidth={220}
-                gutterWidth={15}
-                gutterHeight={20}
-                itemHeight={190}
-                springConfig={{ stiffness: 170, damping: 22 }}
-              >
-              {this.state.events.map((element: Event) => {
+            <GridPage
+              component='ul'
+              columns={5}
+              columnWidth={220}
+              gutterWidth={15}
+              gutterHeight={20}
+              itemHeight={190}
+              springConfig={{ stiffness: 170, damping: 22 }}
+            >
+              {this.state.events.filter((element: Event) => {
+                if (element.status === 'CANCELLED') {
+                  return false
+                }
+                return true
+              }).map((element: Event) => {
                 return (
                   <div key={element.clientName} className='text-center'>
                     <Link to={'/event/' + element._id} ><CalendarIcon className='fas fa-calendar-day'></CalendarIcon></Link>
@@ -125,7 +129,7 @@ export class Events extends React.Component<Props, State> {
                   </div>
                 )
               })}
-              </GridPage>
+            </GridPage>
           </ContainerContainerEvents>
         </ContainerBox>
       </div>
