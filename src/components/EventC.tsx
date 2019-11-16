@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { getEvent, deleteEvent, editEventItem } from '../shared/RestApi'
+import { getEvent, changeEventStatus, editEventItem } from '../shared/RestApi'
 import { RingLoaderWrapper } from '../shared/RingLoaderWrapper'
 import { Event, Status } from '../shared/types'
 import styled from 'styled-components'
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import sweetalert2, { SweetAlertResult } from 'sweetalert2'
 
 const BigContainer = styled.div`
+  padding-bottom: 50px;
   background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
 `
 const ContainerBox = styled.div`
@@ -95,6 +96,31 @@ const ProviderAtt = styled.h6`
   padding-left: 1.25rem;
 `
 
+const SubmitButton = styled.button`
+  margin-top: 20px;
+  width: 30%;
+  font-family: roboto;
+  font-size: 16px;
+  line-height: 1;
+  color: #fff;
+  height: 52px;
+  border-radius: 3px;
+  background: #0B4163;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 20px;
+  -o-transition: all .4s;
+  -moz-transition: all .4s;
+  transition: all .4s;
+
+  &:hover {
+    cursor: pointer;
+    background: #333333;
+  }
+`
+
 type State = {
   event: Event | undefined
   modal: boolean
@@ -151,15 +177,34 @@ export class EventC extends React.Component<Props, State> {
     })
   }
 
+  areYouSureAcceptDialog = async (): Promise<SweetAlertResult> => {
+    return await sweetalert2({
+      title: 'Estas Seguro?',
+      text: 'Solo podras cancelar el evento despues de aceptarlo',
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#28A745',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Si, aceptar!',
+    })
+  }
+
   deleteEvent = async () => {
     const res = await this.areYouSureDeleteDialog()
     if (res.value) {
-      await deleteEvent(this.props.match.params._id, Status.CANCELLED)
+      await changeEventStatus(this.props.match.params._id, Status.CANCELLED)
     }
   }
 
   editItem = (item : string) => async (_event : React.MouseEvent<HTMLElement>) => {
     await editEventItem(this.props.match.params._id, item)
+  }
+
+  acceptEvent = async () => {
+    const res = await this.areYouSureAcceptDialog()
+    if (res.value) {
+      await changeEventStatus(this.props.match.params._id, Status.ACCEPTED)
+    }
   }
 
   render() {
@@ -211,6 +256,7 @@ export class EventC extends React.Component<Props, State> {
                     )
                   })}
                 </ul>
+                <div style={{ display: 'flex', justifyContent: 'center' }} className='text-center'><SubmitButton onClick={this.acceptEvent}>Confirm Event</SubmitButton></div>
           </EventBox>
         </ContainerBox>
       </BigContainer>
