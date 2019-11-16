@@ -25,17 +25,30 @@ export type ServiceToDisplay = {
   cost: number,
 }
 
+export type ServiceClient = {
+  priceClient: number,
+  service: string,
+  notes: string,
+  installationHour: string,
+}
+
 export type Service = {
   type: string,
-  providerName: string,
   cost: number,
   price: number,
   description: string,
   instalationHour: string,
   notes: string,
+  service: string,
 }
 
 export type LoginForm = {
   username: string,
   password: string,
+}
+
+export enum Status {
+  PENDING = 'PEDNING',
+  ACCEPTED = 'ACCEPTED',
+  CANCELLED = 'CANCELLED'
 }
