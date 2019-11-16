@@ -1,5 +1,12 @@
 import * as React from 'react'
 import { RingLoader } from 'react-spinners'
+import styled from 'styled-components'
+
+const Container = styled.div`
+  height: 100vh;
+  background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
+  padding-top: 30px;
+`
 
 type State = {
 }
@@ -15,14 +22,14 @@ export class RingLoaderWrapper extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
-        <div className='text-center' style={ { width: '200px', margin: '30px auto' } }>
+      <Container>
+        <div className='text-center' style={ { width: '200px', margin: 'auto' } }>
           <RingLoader
-            color='rgba(10,65,99,1)'
+            color='white'
             size={ 200 } />
         </div>
-        <h1 className='text-center' style={ { color: 'rgba(10,65,99,1)', fontSize: '30px', marginTop: '20px' } }>Garza Events</h1>
-      </div>
+        <h1 className='text-center' style={ { color: 'white', fontSize: '30px', marginTop: '20px' } }>Garza Events</h1>
+      </Container>
     )
   }
 }
