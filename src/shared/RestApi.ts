@@ -131,7 +131,7 @@ export async function getEvent(id: string) {
   }
 }
 
-export async function deleteEvent(id: string, newStatus: Status) : Promise<void> {
+export async function changeEventStatus(id: string, newStatus: Status) : Promise<void> {
   if (shouldMockApis()) {
     console.log('Magic delete :D', id)
   } else {
@@ -145,7 +145,11 @@ export async function deleteEvent(id: string, newStatus: Status) : Promise<void>
       body: JSON.stringify({ query: mutation })
     })
     if (response.status === 200) {
-      await successDialog('Evento borrado con exito')
+      if (newStatus == Status.CANCELLED) {
+        await successDialog('Evento borrado con exito')
+      } else {
+        await successDialog('Evento aceptado!')
+      }
     } else {
       await errorDialog('Hubo un error al borrar el evento')
     }
