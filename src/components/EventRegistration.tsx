@@ -3,7 +3,7 @@ import { Event, Service, ServiceToDisplay, ServiceToUI } from '../shared/types'
 import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
 import styled from 'styled-components'
-import { getServices } from '../shared/RestApi'
+import { getServices, postEvent } from '../shared/RestApi'
 
 const Container = styled.div`
   background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
@@ -114,9 +114,9 @@ export class EventRegistration extends React.Component<Props, State> {
     x.pricePerHour = 0
     x.totalPrice = 0
     x.totalCost = 0
-    x.providers = this.getArrServices()
+    x.providers = await this.getArrServices()
 
-    let servicesToUi: ServiceToUI[] = this.getServicesToUi()
+    let servicesToUi: ServiceToUI[] = await this.getServicesToUi()
 
     await this.setState({
       event: x,
@@ -124,8 +124,8 @@ export class EventRegistration extends React.Component<Props, State> {
     })
   }
 
-  getServicesToUi = (): ServiceToUI[] => {
-    let servicesToDisplay: ServiceToDisplay[] = getServices()
+  getServicesToUi = async (): Promise<ServiceToUI[]> => {
+    let servicesToDisplay: ServiceToDisplay[] = await getServices()
     let types: string[] = this.getTypes(servicesToDisplay)
     let servicesToUI: ServiceToUI[] = []
 
@@ -148,15 +148,15 @@ export class EventRegistration extends React.Component<Props, State> {
     return servicesToUI
   }
 
-  getArrServices = (): Service[] => {
-    let servicesToDisplay: ServiceToDisplay[] = getServices()
+  getArrServices = async (): Promise<Service[]> => {
+    let servicesToDisplay: ServiceToDisplay[] = await getServices()
     let types: string[] = this.getTypes(servicesToDisplay)
     let services: Service[] = []
 
     types.forEach(element => {
       let service: Service = {
         type: element,
-        providerName: '',
+        service: '',
         cost: 0,
         price: 0,
         description: '',
@@ -221,7 +221,6 @@ export class EventRegistration extends React.Component<Props, State> {
       priceTmp += service.price
       costTmp += service.cost
     }
-    console.log(console.log(costTmp))
     newFormModel.totalPrice = priceTmp
     newFormModel.totalCost = costTmp
     await this.setState({
@@ -255,9 +254,8 @@ export class EventRegistration extends React.Component<Props, State> {
     }) 
   }
 
-  submittedForm = () => {
-    let json = JSON.stringify(this.state.event, null, 2)
-    alert(json)
+  submittedForm = async () => {
+    await postEvent(this.state.event)
   }
 
   render() {
@@ -306,7 +304,7 @@ export class EventRegistration extends React.Component<Props, State> {
                 <div className='col-md-4'>
                   <label>De</label>
                   <select onChange={ this.handleFromChange } className='form-control ' placeholder='Horario de evento'>
-                    <option disabled selected> -- selecciona una opcion -- </option>
+                  <option disabled selected> -- selecciona una opcion -- </option>
                     <option>12:00 PM</option>
                     <option>1:00 PM</option>
                     <option>2:00 PM</option>
@@ -365,7 +363,7 @@ export class EventRegistration extends React.Component<Props, State> {
                       </select>
                       <label>Hora de instalacion</label>
                       <select onChange={ this.handleServiceHourChange(element.name) } style={{ marginBottom: '10px' }} className='form-control'>
-                        <option disabled selected> -- selecciona una opcion -- </option>
+                      <option disabled selected> -- selecciona una opcion -- </option>
                         <option>12:00 PM</option>
                         <option>1:00 PM</option>
                         <option>2:00 PM</option>
