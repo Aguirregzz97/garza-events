@@ -141,7 +141,7 @@ export class Login extends React.Component<Props, State> {
           <Box>
             <HeadingLogin>Login</HeadingLogin>
             <InputUsername onChange={ this.handleInputChange('username') } placeholder='username' />
-            <InputPassword onChange={ this.handleInputChange('password') } placeholder='password'></InputPassword>
+            <InputPassword type='password' onChange={ this.handleInputChange('password') } placeholder='password'></InputPassword>
             <LoginBtn>Login</LoginBtn>
             <img style={{ width: '60px', marginTop: '40px' }} src={userImage} alt=""/>
           </Box>
