@@ -254,7 +254,8 @@ export class EventRegistration extends React.Component<Props, State> {
     }) 
   }
 
-  submittedForm = async () => {
+  submittedForm = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     await postEvent(this.state.event)
   }
 
