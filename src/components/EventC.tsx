@@ -189,6 +189,15 @@ export class EventC extends React.Component<Props, State> {
     })
   }
 
+  editDialog = async (): Promise<SweetAlertResult> => {
+    return await sweetalert2({
+      title: 'Submit your new value',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: 'Edit!',
+    })
+  }
+
   deleteEvent = async () => {
     const res = await this.areYouSureDeleteDialog()
     if (res.value) {
@@ -197,7 +206,8 @@ export class EventC extends React.Component<Props, State> {
   }
 
   editItem = (item : string) => async (_event : React.MouseEvent<HTMLElement>) => {
-    await editEventItem(this.props.match.params._id, item)
+    const editValue = await this.editDialog()
+    await editEventItem(this.props.match.params._id, item, editValue.value)
   }
 
   acceptEvent = async () => {
