@@ -156,6 +156,6 @@ export async function changeEventStatus(id: string, newStatus: Status) : Promise
   }
 }
 
-export async function editEventItem(id : string, item : string) {
-  console.log(id, item)
+export async function editEventItem(id : string, item : string, newValue: string) {
+  console.log(id, item, newValue)
 }
