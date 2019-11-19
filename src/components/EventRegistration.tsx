@@ -9,6 +9,32 @@ const Container = styled.div`
   background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
   paddingBottom: '500px';
 `
+
+const ContainerThanks = styled.div`
+  background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const IconThanks = styled.i`
+  display: block;
+  color: white;
+  font-size: 120px;
+  margin-top: 40px;
+`
+
+const ThanksTitle = styled.h4`
+  color: white;
+  font-family: roboto;
+  font-size: 30px;
+  margin-top: 20px;
+  padding-right: 15%;
+  padding-left: 15%;
+  text-align: center;
+`
+
 const EventRegistrationContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -87,7 +113,8 @@ const PriceHeading = styled.div`
 
 type State = {
   event: Event | any,
-  servicesToUi: ServiceToUI[]
+  servicesToUi: ServiceToUI[],
+  finishRegistration: boolean,
 }
 
 type Props = {
@@ -100,6 +127,7 @@ export class EventRegistration extends React.Component<Props, State> {
     this.state = {
       event: undefined,
       servicesToUi: [],
+      finishRegistration: false,
     }
   }
 
@@ -257,9 +285,20 @@ export class EventRegistration extends React.Component<Props, State> {
   submittedForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     await postEvent(this.state.event)
+    this.setState({
+      finishRegistration: true,
+    })
   }
 
   render() {
+    if (this.state.finishRegistration) {
+      return (
+        <ContainerThanks>
+          <IconThanks className='far fa-laugh-beam'></IconThanks>
+          <ThanksTitle>Thanks for creating an event, a confirmation message will be sent as soon as the event gets accepeted!</ThanksTitle>
+        </ContainerThanks>
+      )
+    }
     return ( 
       <Container>
         <EventRegistrationContainer>
