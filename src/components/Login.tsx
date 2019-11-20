@@ -17,7 +17,7 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 60%;
+  height: 80%;
   width: 450px;
   background: #fff;
   border-radius: 3px;

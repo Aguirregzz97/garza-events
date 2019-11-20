@@ -244,6 +244,10 @@ export class EventC extends React.Component<Props, State> {
                 </li>
                 <li className='list-group-item'>
                   <EventAtt>Cellphone: {this.state.event.cellphone}</EventAtt>
+                  <EditIcon onClick={ this.editItem('date') } className='fas fa-edit'></EditIcon>
+                </li>
+                <li className='list-group-item'>
+                  <EventAtt>Date: {this.state.event.date}</EventAtt>
                   <EditIcon onClick={ this.editItem('cellphone') } className='fas fa-edit'></EditIcon>
                 </li>
                 <li className='list-group-item'>

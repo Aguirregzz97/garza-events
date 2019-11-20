@@ -33,13 +33,14 @@ const HomeIcon = styled.div`
 
 const ContainerContainerEvents = styled.div`
   min-height: 100vh;
+  display: flex;
   padding-left: 5%;
   padding-right: 5%;
 `
 
 const CalendarIcon = styled.i`
   color: white;
-  font-size: 120px;
+  font-size: 110px;
   padding-right: '5px';
   padding-left: '5px';
   transition: 0.3s;
@@ -109,11 +110,11 @@ export class Events extends React.Component<Props, State> {
             <GridPage
               component='ul'
               columns={5}
-              columnWidth={220}
+              columnWidth={180}
               gutterWidth={15}
               gutterHeight={20}
               itemHeight={190}
-              springConfig={{ stiffness: 170, damping: 22 }}
+              springConfig={{ stiffness: 150, damping: 22 }}
             >
               {this.state.events.filter((element: Event) => {
                 if (element.status === 'CANCELLED') {
