@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { getEvent, changeEventStatus, editEventItem } from '../shared/RestApi'
+import { getEvent, changeEventStatus, changeDate, changeHours, changeProvider } from '../shared/RestApi'
 import { RingLoaderWrapper } from '../shared/RingLoaderWrapper'
-import { Event, Status } from '../shared/types'
+import { Event, Status, Service } from '../shared/types'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import sweetalert2, { SweetAlertResult } from 'sweetalert2'
@@ -62,6 +62,18 @@ const EditIcon = styled.i`
   display: inline-block;
   float: right;
   margin-top: 8px;
+
+  &:hover {
+    transform: scale(1.08);
+    cursor: pointer;
+  }
+`
+
+const EditIconCost = styled.i`
+  font-size: 25px;
+  color: green;
+  display: inline-block;
+  margin-left: 10px;
 
   &:hover {
     transform: scale(1.08);
@@ -205,9 +217,57 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
-  editItem = (item : string) => async (_event : React.MouseEvent<HTMLElement>) => {
+  // editDate = (dar : string) => async (_event : React.MouseEvent<HTMLElement>) => {
+  //   const editValue = await this.editDialog()
+  //   await editEventItem(this.props.match.params._id, item, editValue.value)
+  // }
+
+  editDate = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
-    await editEventItem(this.props.match.params._id, item, editValue.value)
+    if (editValue.value) {
+      await changeDate(this.props.match.params._id, editValue.value)
+      const newEvent : Event = event
+      newEvent.date = editValue.value
+      this.setState({
+        event: newEvent
+      })
+    }
+  }
+
+  editStartHour = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
+    const editValue = await this.editDialog()
+    if (editValue.value) {
+      await changeHours(this.props.match.params._id, editValue.value, event.endHour)
+      const newEvent : Event = event
+      newEvent.startHour = editValue.value
+      this.setState({
+        event: newEvent
+      })
+    }
+  }
+
+  editEventCost = (event: Event, provider: Service) => async (_event : React.MouseEvent<HTMLElement>) => {
+    const editValue = await this.editDialog()
+    if (editValue.value) {
+      await changeProvider(event, provider, editValue.value)
+      const newEvent : Event = event
+      newEvent.endHour = editValue.value
+      this.setState({
+        event: newEvent
+      })
+    }
+  }
+ 
+  editEndHour = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
+    const editValue = await this.editDialog()
+    if (editValue.value) {
+      await changeHours(this.props.match.params._id, event.startHour, editValue.value)
+      const newEvent : Event = event
+      newEvent.endHour = editValue.value
+      this.setState({
+        event: newEvent
+      })
+    }
   }
 
   acceptEvent = async () => {
@@ -221,6 +281,7 @@ export class EventC extends React.Component<Props, State> {
     if (this.state.event === undefined) {
       return ( <RingLoaderWrapper /> )
     }
+    const event: Event = this.state.event
     return (
       <BigContainer>
           <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
@@ -235,38 +296,44 @@ export class EventC extends React.Component<Props, State> {
             </EventHeadingDiv>
               <ul className='list-group'>
                 <li style={{ display: 'inline-block' }} className='list-group-item'>
-                  <EventAtt>Client Name: {this.state.event.clientName}</EventAtt>
-                  <EditIcon onClick={ this.editItem('clientName') } className='fas fa-edit'></EditIcon>
+                  <EventAtt>Client Name: {event.clientName}</EventAtt>
                 </li>
                 <li className='list-group-item'>
-                  <EventAtt>Address: {this.state.event.address}</EventAtt>
-                  <EditIcon onClick={ this.editItem('address') } className='fas fa-edit'></EditIcon>
+                  <EventAtt>Address: {event.address}</EventAtt>
                 </li>
                 <li className='list-group-item'>
-                  <EventAtt>Cellphone: {this.state.event.cellphone}</EventAtt>
-                  <EditIcon onClick={ this.editItem('date') } className='fas fa-edit'></EditIcon>
+                  <EventAtt>Cellphone: {event.cellphone}</EventAtt>
                 </li>
                 <li className='list-group-item'>
-                  <EventAtt>Date: {this.state.event.date}</EventAtt>
-                  <EditIcon onClick={ this.editItem('cellphone') } className='fas fa-edit'></EditIcon>
+                  <EventAtt>Date: {event.date}</EventAtt>
+                  <EditIcon onClick={ this.editDate(event) } className='fas fa-edit'></EditIcon>
                 </li>
                 <li className='list-group-item'>
-                  <EventAtt>Start Hour: {this.state.event.startHour}</EventAtt>
-                  <EditIcon onClick={ this.editItem('startHour') } className='fas fa-edit'></EditIcon>
+                  <EventAtt>Start Hour: {event.startHour}</EventAtt>
+                  <EditIcon onClick={ this.editStartHour(event) } className='fas fa-edit'></EditIcon>
                 </li>
                 <li className='list-group-item'>
-                  <EventAtt>End Hour: {this.state.event.endHour}</EventAtt>
-                  <EditIcon onClick={ this.editItem('endHour') } className='fas fa-edit'></EditIcon>
+                  <EventAtt>End Hour: {event.endHour}</EventAtt>
+                  <EditIcon onClick={ this.editEndHour(event) } className='fas fa-edit'></EditIcon>
                 </li>
-                <li className='list-group-item'><EventAtt>Price Per Hour: {this.state.event.pricePerHour}</EventAtt></li>
-                <li className='list-group-item'><EventAtt>Total Price: {this.state.event.totalPrice}</EventAtt></li>
-                <li className='list-group-item'><EventAtt>Total Cost: {this.state.event.totalCost}</EventAtt></li>
+                <li className='list-group-item'><EventAtt>Price Per Hour: {event.pricePerHour}</EventAtt></li>
+                <li className='list-group-item'><EventAtt>Total Price: {event.totalPrice}</EventAtt></li>
+                <li className='list-group-item'><EventAtt>Total Cost: {event.totalCost}</EventAtt></li>
               </ul>
               <ProviderAtt>Providers: </ProviderAtt>
                 <ul>
-                  {this.state.event.providers.map(element => {
+                  {event.providers.map(element => {
                     return (
-                      <li><EventAtt>{element.service}</EventAtt></li>
+                      <div>
+                        <li><EventAtt>{element.service}</EventAtt></li>
+                        <ul>
+                          <li>
+                            <EventAtt>Cost: {element.priceProvider == undefined ? "No se ha agregado un costo!" : element.priceProvider}<EditIconCost onClick={ this.editEventCost(event, element) } className='fas fa-edit'></EditIconCost></EventAtt>
+                          </li>
+                          <li><EventAtt>Notes: {element.notes}</EventAtt></li>
+                          <li><EventAtt>Price Client: {element.priceClient}</EventAtt></li>
+                        </ul>
+                      </div>
                     )
                   })}
                 </ul>
