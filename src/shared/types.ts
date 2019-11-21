@@ -1,4 +1,4 @@
-export type Event = {
+  export type Event = {
   _id: string,
   clientName: string,
   address: string,
@@ -33,9 +33,10 @@ export type ServiceClient = {
 }
 
 export type Service = {
+  _id: string,
   type: string,
-  cost: number,
-  price: number,
+  priceProvider: number,
+  priceClient: number,
   description: string,
   instalationHour: string,
   notes: string,
