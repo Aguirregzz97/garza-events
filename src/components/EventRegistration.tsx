@@ -183,10 +183,11 @@ export class EventRegistration extends React.Component<Props, State> {
 
     types.forEach(element => {
       let service: Service = {
+        _id: '',
         type: element,
         service: '',
-        cost: 0,
-        price: 0,
+        priceProvider: 0,
+        priceClient: 0,
         description: '',
         instalationHour: '',
         notes: '',
@@ -234,20 +235,21 @@ export class EventRegistration extends React.Component<Props, State> {
   }
 
   handleServicePlanChange = (type: string, hashMap: {[key: string]: number[]}) => async (event: any) => {
+    console.log(type, ' ', hashMap, '', event.target.value)
     let newFormModel: Event = this.state.event
     for (const service of newFormModel.providers) {
       if (service.type === type) {
         service.description = event.target.value
-        service.price = hashMap[event.target.value][0]
-        service.cost = hashMap[event.target.value][1]
+        service.priceClient = hashMap[event.target.value][0]
+        service.priceProvider = hashMap[event.target.value][1]
         break
       }
     }
     let priceTmp = 0
     let costTmp = 0
     for (const service of this.state.event.providers) {
-      priceTmp += service.price
-      costTmp += service.cost
+      priceTmp += service.priceClient
+      costTmp += service.priceProvider
     }
     newFormModel.totalPrice = priceTmp
     newFormModel.totalCost = costTmp
