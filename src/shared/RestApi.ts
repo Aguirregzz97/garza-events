@@ -1,7 +1,6 @@
 import { shouldMockApis } from "./shouldMockApis"
-import { ServiceToDisplay, Event, ServiceClient, Status } from "./types"
+import { ServiceToDisplay, Event, ServiceClient, Status, Service } from "./types"
 import { successDialog, errorDialog } from "./GenericAlerts"
-
 
 interface IGetServicesResponseData {
   getServices: ServiceToDisplay[];
@@ -48,7 +47,7 @@ export async function postEvent(event: Event) : Promise<void> {
         service: provider.type,
         notes: provider.notes,
         installationHour: provider.instalationHour,
-        priceClient: provider.price
+        priceClient: provider.priceClient
       }
       servicesClient.push(serviceClient)
     }
@@ -59,7 +58,7 @@ export async function postEvent(event: Event) : Promise<void> {
         service: "${service.service}",
         notes: "${service.notes}",
         installationHour: "${service.installationHour}",
-        priceClient: ${service.priceClient}
+        priceClient: ${service.priceClient},
       },
       `
       servicesString += tmp
@@ -121,7 +120,7 @@ export async function getEvent(id: string) {
       const response = await fetch('http://168.62.52.177:3000/graphql', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { clientName date startHour endHour cellphone address providers { priceClient notes installationHour service } status } }` }),
+        body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { _id clientName date startHour endHour cellphone address providers { _id priceClient notes installationHour service priceProvider } status } }` }),
       })
       const res : IGraphqlDataResponse<IGetEventResponseData> = await response.json()
       return res.data.getEvent
@@ -152,6 +151,90 @@ export async function changeEventStatus(id: string, newStatus: Status) : Promise
       }
     } else {
       await errorDialog('Hubo un error al borrar el evento')
+    }
+  }
+}
+
+export async function changeDate(id: string, newDate: string) : Promise<void> {
+  if (shouldMockApis()) {
+    console.log('Magic edit date :D', id)
+  } else {
+    let mutation : string = `mutation {
+      changeDate(eventID: "${id}", startDateNew: "${newDate}") {
+        _id
+        clientName
+      }
+    }`
+    const response = await fetch('http://168.62.52.177:3000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: mutation })
+    })
+    if (response.status == 200) {
+      await successDialog('Fecha editada correctamente')
+    } else {
+      await errorDialog('Hubo un error al editar la fecha')
+    }
+  }
+}
+
+
+export async function changeHours(id: string, newStartHour: string, newEndHour: string) : Promise<void> {
+  if (shouldMockApis()) {
+    console.log('Magic edit hours :D', id)
+  } else {
+    let mutation : string = `mutation {
+      changeHours(
+        eventID: "${id}"
+        startHourNew: "${newStartHour}"
+        endHourNew: "${newEndHour}"
+      ) {
+        _id
+        clientName
+      }
+    }`
+    const response = await fetch('http://168.62.52.177:3000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: mutation })
+    })
+    if (response.status == 200) {
+      await successDialog('Horas editadas correctamente')
+    } else {
+      await errorDialog('Hubo un error al editar las horas')
+    }
+  }
+}
+
+export async function changeProvider(event: Event, provider: Service, newCost: number) {
+  if (shouldMockApis()) {
+    console.log('Magic edit Provider :D', event)
+  } else {
+    console.log(event)
+    console.log(provider)
+    let mutation = `mutation {
+      changeProvider(
+        eventID: "${event._id}"
+        providerID: "${provider._id}"
+        providerInfo: {
+          name: "${provider.service}"
+          priceProvider: ${newCost}
+          priceClient: ${provider.priceClient}
+          service: "${provider.description}"
+          notes: "${provider.notes}"
+          installationHour: "${provider.instalationHour}"
+        }
+      ) { _id clientName}
+    }`
+    const response = await fetch('http://168.62.52.177:3000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: mutation })
+    })
+    if (response.status == 200) {
+      await successDialog('Proveedor editado correctamente')
+    } else {
+      await errorDialog('Hubo un error al editar el proveedor')
     }
   }
 }
