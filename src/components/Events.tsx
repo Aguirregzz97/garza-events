@@ -67,8 +67,8 @@ const CheckIcon = styled.i`
 `
 
 const CrossIcon = styled.i`
-  color: red;
-  font-size: 20px;
+  color: yellow;
+  font-size: 21px;
   background: none;
   border: none;
 `
@@ -126,7 +126,7 @@ export class Events extends React.Component<Props, State> {
                   <div key={element.clientName} className='text-center'>
                     <Link to={'/event/' + element._id} ><CalendarIcon className='fas fa-calendar-day'></CalendarIcon></Link>
                     <ClientName>{element.clientName}</ClientName>
-                    {element.status === 'ACCEPTED' ? <CheckIcon className='fas fa-check-circle'></CheckIcon> : <CrossIcon className='fas fa-times-circle'></CrossIcon>}
+                    {element.status === 'ACCEPTED' ? <CheckIcon className='fas fa-check-circle'></CheckIcon> : <CrossIcon className='fas fa-pause-circle'></CrossIcon>}
                   </div>
                 )
               })}
