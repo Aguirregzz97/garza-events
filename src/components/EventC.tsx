@@ -246,12 +246,17 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
-  editEventCost = (event: Event, provider: Service) => async (_event : React.MouseEvent<HTMLElement>) => {
+  editProviderCost = (event: Event, provider: Service) => async (_event : React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
     if (editValue.value) {
       await changeProvider(event, provider, editValue.value)
       const newEvent : Event = event
-      newEvent.endHour = editValue.value
+      let index : number = 0
+      for (let i = 0; i < event.providers.length; i++) {
+        if (event.providers[i]._id == provider._id) break
+        index++
+      }
+      newEvent.providers[index].priceProvider = editValue.value
       this.setState({
         event: newEvent
       })
@@ -328,7 +333,7 @@ export class EventC extends React.Component<Props, State> {
                         <li><EventAtt>{element.service}</EventAtt></li>
                         <ul>
                           <li>
-                            <EventAtt>Cost: {element.priceProvider == undefined ? "No se ha agregado un costo!" : element.priceProvider}<EditIconCost onClick={ this.editEventCost(event, element) } className='fas fa-edit'></EditIconCost></EventAtt>
+                            <EventAtt>Cost: {element.priceProvider == undefined ? "No se ha agregado un costo!" : element.priceProvider}<EditIconCost onClick={ this.editProviderCost(event, element) } className='fas fa-edit'></EditIconCost></EventAtt>
                           </li>
                           <li><EventAtt>Notes: {element.notes}</EventAtt></li>
                           <li><EventAtt>Price Client: {element.priceClient}</EventAtt></li>
