@@ -71,6 +71,7 @@ export async function postEvent(event: Event) : Promise<void> {
         date: "${event.date}",
         startHour: "${event.startHour}",
         endHour: "${event.endHour}",
+        totalPrice: ${event.totalPrice}
         providers: [
           ${servicesString}
         ]
@@ -120,7 +121,7 @@ export async function getEvent(id: string) {
       const response = await fetch('http://168.62.52.177:3000/graphql', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { _id clientName date startHour endHour cellphone address providers { _id priceClient notes installationHour service priceProvider } status } }` }),
+        body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { _id clientName date startHour endHour cellphone address totalPrice providers { _id priceClient notes installationHour service priceProvider } status } }` }),
       })
       const res : IGraphqlDataResponse<IGetEventResponseData> = await response.json()
       return res.data.getEvent
