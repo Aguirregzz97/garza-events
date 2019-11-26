@@ -43,6 +43,7 @@ export async function postEvent(event: Event) : Promise<void> {
   } else {
     let servicesClient : ServiceClient[] = []
     for (const provider of event.providers) {
+      if (provider.instalationHour === "") continue
       let serviceClient : ServiceClient = {
         service: provider.type,
         notes: provider.notes,
@@ -133,7 +134,7 @@ export async function getEvent(id: string) {
 
 export async function changeEventStatus(id: string, newStatus: Status) : Promise<void> {
   if (shouldMockApis()) {
-    console.log('Magic delete :D', id)
+    console.log('Magic change status :D', id)
   } else {
     let mutation : string = `mutation {
       changeEventStatus(eventID: "${id}", newStatus: ${newStatus})
