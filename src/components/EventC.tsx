@@ -321,9 +321,7 @@ export class EventC extends React.Component<Props, State> {
                   <EventAtt>End Hour: {event.endHour}</EventAtt>
                   <EditIcon onClick={ this.editEndHour(event) } className='fas fa-edit'></EditIcon>
                 </li>
-                <li className='list-group-item'><EventAtt>Price Per Hour: {event.pricePerHour}</EventAtt></li>
                 <li className='list-group-item'><EventAtt>Total Price: {event.totalPrice}</EventAtt></li>
-                <li className='list-group-item'><EventAtt>Total Cost: {event.totalCost}</EventAtt></li>
               </ul>
               <ProviderAtt>Providers: </ProviderAtt>
                 <ul>
