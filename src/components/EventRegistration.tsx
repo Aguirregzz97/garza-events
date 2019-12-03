@@ -297,7 +297,7 @@ export class EventRegistration extends React.Component<Props, State> {
       return (
         <ContainerThanks>
           <IconThanks className='far fa-laugh-beam'></IconThanks>
-          <ThanksTitle>Thanks for creating an event, a confirmation message will be sent as soon as the event gets accepeted!</ThanksTitle>
+          <ThanksTitle>Gracias por crear un evento, un mensaje de confirmacion sera enviado cuando se acepte tu evento!</ThanksTitle>
         </ContainerThanks>
       )
     }
