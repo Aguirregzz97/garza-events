@@ -2,6 +2,8 @@ import * as React from 'react'
 import { LoginForm } from '../shared/types'
 import styled from 'styled-components'
 import { Redirect } from 'react-router'
+import { loginApi } from '../shared/RestApi'
+import { successLogin, errorDialog } from '../shared/GenericAlerts'
 
 const userImage = require('./../assets/img/username.png')
 
@@ -90,7 +92,7 @@ const LoginBtn = styled.button`
 `
 
 type State = {
-  loginForm: LoginForm | any,
+  loginForm: LoginForm,
   loginSucces:  boolean
 }
 
@@ -102,32 +104,37 @@ export class Login extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      loginForm: undefined,
+      loginForm: { username: '',  password: '' },
       loginSucces: false
     }
   }
 
   componentDidMount() {
-    let user: LoginForm = { ...this.state.loginForm }
-    user.username = ''
-    user.password = ''
-    this.setState({
-      loginForm: user
-    })
+    if (localStorage.getItem('token')) {
+      window.location.href = '/#/events'
+    }
   }
 
-  handleInputChange = (paramName: string) => (event: any) => {
-    let newLoginForm: any = { ...this.state.loginForm }
+  handleInputChange = (paramName: 'username' | 'password') => (event: any) => {
+    let newLoginForm: LoginForm = {
+      username: this.state.loginForm.username,
+      password: this.state.loginForm.password,
+    }
     newLoginForm[paramName] = event.target.value
     this.setState({
       loginForm: newLoginForm
     })
   }
 
-  submittedForm = (_event: any) => {
-    this.setState({
-      loginSucces: true
-    })
+  submittedForm = async (_event: React.FormEvent<HTMLFormElement>) => {
+    if (await loginApi(this.state.loginForm)) {
+      await successLogin('Login correcto!')
+      this.setState({
+        loginSucces: true
+      })
+    } else {
+      errorDialog('Login incorrecto, intenta de nuevo')
+    }
   }
 
 
