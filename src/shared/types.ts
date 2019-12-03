@@ -30,6 +30,7 @@ export type ServiceClient = {
   service: string,
   notes: string,
   installationHour: string,
+  description: string,
 }
 
 export type Service = {
