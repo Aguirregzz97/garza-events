@@ -16,7 +16,23 @@ const ContainerBox = styled.div`
   min-height: 100vh;
 `
 
+const UpperDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 const HomeIcon = styled.div`
+  color: white;
+  font-size: 65px;
+  margin: 20px;
+  margin-bottom: 20px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const PowerIcon = styled.div`
   color: white;
   font-size: 65px;
   margin: 20px;
@@ -170,7 +186,6 @@ export class EventC extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    // const _id = this.props.match.params._id
     let newEvent: Event = await getEvent(this.props.match.params._id)
     await this.setState({
       event: newEvent
@@ -216,11 +231,6 @@ export class EventC extends React.Component<Props, State> {
       await changeEventStatus(this.props.match.params._id, Status.CANCELLED)
     }
   }
-
-  // editDate = (dar : string) => async (_event : React.MouseEvent<HTMLElement>) => {
-  //   const editValue = await this.editDialog()
-  //   await editEventItem(this.props.match.params._id, item, editValue.value)
-  // }
 
   editDate = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
@@ -282,6 +292,11 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
+  logOut = () => {
+    localStorage.clear()
+    window.location.href = '/'
+  }
+
   render() {
     if (this.state.event === undefined) {
       return ( <RingLoaderWrapper /> )
@@ -289,8 +304,11 @@ export class EventC extends React.Component<Props, State> {
     const event: Event = this.state.event
     return (
       <BigContainer>
-          <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
-        <ContainerBox>
+          <UpperDiv>
+            <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
+            <PowerIcon onClick={this.logOut} className='fas fa-power-off'></PowerIcon>
+          </UpperDiv>
+          <ContainerBox>
           <EventBox>
             <EventHeadingDiv>
               <h1 style={{ visibility: 'hidden' }}>yes</h1>
