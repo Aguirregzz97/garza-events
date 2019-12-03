@@ -14,3 +14,13 @@ export async function successDialog(title : string) {
     title: title,
   })
 }
+
+export async function successLogin(title : string) {
+  await sweetalert2({
+    position: 'top-end',
+    type: 'success',
+    showConfirmButton: false,
+    timer: 1000,
+    title: title,
+  })
+}
