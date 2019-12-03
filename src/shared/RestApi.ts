@@ -1,5 +1,5 @@
 import { shouldMockApis } from "./shouldMockApis"
-import { ServiceToDisplay, Event, ServiceClient, Status, Service } from "./types"
+import { ServiceToDisplay, Event, ServiceClient, Status, Service, LoginForm } from "./types"
 import { successDialog, errorDialog } from "./GenericAlerts"
 
 interface IGetServicesResponseData {
@@ -7,15 +7,51 @@ interface IGetServicesResponseData {
 }
 
 interface IGetEventsResponseData {
-  getEvents: Event[];
+  getEvents: Event[]
 }
 
 interface IGetEventResponseData {
-  getEvent: Event;
+  getEvent: Event
 }
 
 interface IGraphqlDataResponse <T> {
-  data: T;
+  data: T
+}
+
+interface ILoginDataResponse {
+  statusCode: number,
+  error: string,
+  message: string,
+  token: string,
+}
+
+export function redirectToLogin() {
+  localStorage.clear()
+  window.location.href = '/'
+}
+
+export async function loginApi(loginForm: LoginForm) : Promise<boolean> {
+  if (shouldMockApis()) {
+    return  true
+  } else {
+    try {
+      const response = await fetch('http://168.62.52.177:3000/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: `${loginForm.username}`, password: `${loginForm.password}` }),
+      })
+      if (response.status === 401) {
+        return false
+      } else {
+        const res: ILoginDataResponse = await response.json()
+        console.log(res)
+        localStorage.setItem('token', res.token)
+        return true
+      }
+    } catch (error) {
+      return error
+    }
+  }
 }
 
 export async function getServices() : Promise<ServiceToDisplay[]> {
@@ -48,7 +84,8 @@ export async function postEvent(event: Event) : Promise<void> {
         service: provider.type,
         notes: provider.notes,
         installationHour: provider.instalationHour,
-        priceClient: provider.priceClient
+        priceClient: provider.priceClient,
+        description: provider.description,
       }
       servicesClient.push(serviceClient)
     }
@@ -60,6 +97,7 @@ export async function postEvent(event: Event) : Promise<void> {
         notes: "${service.notes}",
         installationHour: "${service.installationHour}",
         priceClient: ${service.priceClient},
+        description: "${service.description}",
       },
       `
       servicesString += tmp
@@ -102,12 +140,16 @@ export async function getEvents() : Promise<Event[]> {
     try {
       const response = await fetch('http://168.62.52.177:3000/graphql', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ query: '{ getEvents {  _id clientName date startHour endHour providers { priceClient  notes installationHour service} status  } }' }),
       })
       const res : IGraphqlDataResponse<IGetEventsResponseData> = await response.json()
       return res.data.getEvents
     } catch (error) {
+      redirectToLogin()
       return error
     }
   }
@@ -121,12 +163,16 @@ export async function getEvent(id: string) {
     try {
       const response = await fetch('http://168.62.52.177:3000/graphql', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `${localStorage.getItem('token')}`, 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { _id clientName date startHour endHour cellphone address totalPrice providers { _id priceClient notes installationHour service priceProvider } status } }` }),
       })
       const res : IGraphqlDataResponse<IGetEventResponseData> = await response.json()
       return res.data.getEvent
     } catch (error) {
+      redirectToLogin()
       return error
     }
   }
@@ -142,7 +188,10 @@ export async function changeEventStatus(id: string, newStatus: Status) : Promise
     }`
     const response = await fetch('http://168.62.52.177:3000/graphql', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `${localStorage.getItem('token')}`, 
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ query: mutation })
     })
     if (response.status === 200) {
@@ -153,6 +202,7 @@ export async function changeEventStatus(id: string, newStatus: Status) : Promise
       }
     } else {
       await errorDialog('Hubo un error al borrar el evento')
+      redirectToLogin()
     }
   }
 }
@@ -169,13 +219,17 @@ export async function changeDate(id: string, newDate: string) : Promise<void> {
     }`
     const response = await fetch('http://168.62.52.177:3000/graphql', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `${localStorage.getItem('token')}`, 
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ query: mutation })
     })
     if (response.status == 200) {
       await successDialog('Fecha editada correctamente')
     } else {
       await errorDialog('Hubo un error al editar la fecha')
+      redirectToLogin()
     }
   }
 }
@@ -197,50 +251,48 @@ export async function changeHours(id: string, newStartHour: string, newEndHour: 
     }`
     const response = await fetch('http://168.62.52.177:3000/graphql', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `${localStorage.getItem('token')}`, 
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ query: mutation })
     })
     if (response.status == 200) {
       await successDialog('Horas editadas correctamente')
     } else {
       await errorDialog('Hubo un error al editar las horas')
+      redirectToLogin()
     }
   }
 }
 
 export async function changeProvider(event: Event, provider: Service, newCost: number) {
+  console.log(newCost)
   if (shouldMockApis()) {
     console.log('Magic edit Provider :D', event)
   } else {
-    console.log(event)
-    console.log(provider)
     let mutation = `mutation {
       changeProvider(
         eventID: "${event._id}"
         providerID: "${provider._id}"
         providerInfo: {
-          name: "${provider.service}"
           priceProvider: ${newCost}
-          priceClient: ${provider.priceClient}
-          service: "${provider.description}"
-          notes: "${provider.notes}"
-          installationHour: "${provider.instalationHour}"
         }
-      ) { _id clientName}
+      ) { _id clientName }
     }`
     const response = await fetch('http://168.62.52.177:3000/graphql', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `${localStorage.getItem('token')}`, 
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ query: mutation })
     })
     if (response.status == 200) {
       await successDialog('Proveedor editado correctamente')
     } else {
       await errorDialog('Hubo un error al editar el proveedor')
+      redirectToLogin()
     }
   }
-}
-
-export async function editEventItem(id : string, item : string, newValue: string) {
-  console.log(id, item, newValue)
 }
