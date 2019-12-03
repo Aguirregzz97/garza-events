@@ -20,7 +20,23 @@ const EventsHeading = styled.div`
   margin-bottom: 30px;
 `
 
+const UpperDiv = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 const HomeIcon = styled.div`
+  color: white;
+  font-size: 65px;
+  margin: 20px;
+  margin-bottom: 20px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const PowerIcon = styled.div`
   color: white;
   font-size: 65px;
   margin: 20px;
@@ -97,6 +113,11 @@ export class Events extends React.Component<Props, State> {
     })
   }
 
+  logOut = () => {
+    localStorage.clear()
+    window.location.href = '/'
+  }
+
   render() {
     if (this.state.events === undefined) {
       return (<RingLoaderWrapper />)
@@ -104,7 +125,10 @@ export class Events extends React.Component<Props, State> {
     return (
       <div>
         <ContainerBox>
-          <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
+          <UpperDiv>
+            <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
+            <PowerIcon onClick={this.logOut} className='fas fa-power-off'></PowerIcon>
+          </UpperDiv>
           <EventsHeading>Events</EventsHeading>
           <ContainerContainerEvents>
             <GridPage
