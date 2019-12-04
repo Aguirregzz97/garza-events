@@ -35,7 +35,7 @@ export function redirectToEvents() {
 }
 
 export async function loginApi(loginForm: LoginForm) : Promise<boolean> {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     return  true
   } else {
     try {
@@ -59,7 +59,7 @@ export async function loginApi(loginForm: LoginForm) : Promise<boolean> {
 }
 
 export async function getServices() : Promise<ServiceToDisplay[]> {
-  if (!shouldMockApis()) { 
+  if (shouldMockApis()) { 
     const res : IGraphqlDataResponse<IGetServicesResponseData> = JSON.parse('{ "data": { "getServices": [ { "_id": "5d9f4a230aa6b346ba825b8d", "type": "Iluminacion", "description": "Iluminación paquete 1 - 2 spots led, 2 luces robóticas", "price": 1200, "cost": 1200 }, { "_id": "5da7a583bf70f831208bbe46", "type": "Iluminacion", "description": "Iluminación paquete 2 - 4 spots led, 4 luces robóticas", "price": 0, "cost": 2000 }, { "_id": "5da7a59abf70f831208bbe47", "type": "PistaIluminada", "description": "Pista 3x3", "price": 0, "cost": 3000 } ] } }')
     return res.data.getServices
   } else {
@@ -78,7 +78,7 @@ export async function getServices() : Promise<ServiceToDisplay[]> {
 }
 
 export async function postEvent(event: Event) : Promise<void> {
-  if (!shouldMockApis()) { 
+  if (shouldMockApis()) { 
     console.log('Magical Post :D', event)
   } else {
     let servicesClient : ServiceClient[] = []
@@ -137,7 +137,7 @@ export async function postEvent(event: Event) : Promise<void> {
 }
 
 export async function getEvents() : Promise<Event[]> {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     const res : IGraphqlDataResponse<IGetEventsResponseData> = JSON.parse('{ "data":{ "getEvents":[ { "_id":"5d9f4a230aa6b346ba825b8", "clientName":"Ricardo", "address":"R", "cellphone":"1111111", "date":"2019-01-01", "startHour":"18:00", "endHour":"21:00", "pricePerHour":"500", "totalPrice":"4000", "totalCost":"3000", "status":"PENDING", "providers":[ { "type":"Iluminacion", "providerName":"proveedor iluminacion", "cost":"1000", "price":"2000", "description":"Iluminación paquete 1 - 2 spots led, 2 luces robóticas", "instalationHour":"10:00 PM", "notes":"This is notes for iluminacion" }, { "type":"PistaIluminada", "providerName":"proveedor pista", "cost":"500", "price":"1000", "description":"Pista 3x3", "instalationHour":"9:00 PM", "notes":"This is notes for pista" } ] } ] } }')
     return res.data.getEvents
   } else {
@@ -160,7 +160,7 @@ export async function getEvents() : Promise<Event[]> {
 }
 
 export async function getEvent(id: string) {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     const res : IGraphqlDataResponse<IGetEventResponseData> = JSON.parse('{ "data": { "getEvent": { "_id": "5d9f4a230aa6b346ba825b8d", "clientName": "Ricardo", "address": "R", "cellphone": "1111111", "date": "2019-01-01", "startHour": "18:00", "endHour": "21:00", "pricePerHour": "500", "totalPrice": "4000", "totalCost": "3000", "providers": [ { "type": "Iluminacion", "service": "proveedor iluminacion", "cost": "1000", "price": "2000", "description": "Iluminación paquete 1 - 2 spots led, 2 luces robóticas", "instalationHour": "10:00 PM", "notes": "This is notes for iluminacion" }, { "type": "PistaIluminada", "service": "proveedor pista", "cost": "500", "price": "1000", "description": "Pista 3x3", "instalationHour": "9:00 PM", "notes": "This is notes for pista" } ] } } }')
     return res.data.getEvent
   } else {
@@ -183,7 +183,7 @@ export async function getEvent(id: string) {
 }
 
 export async function changeEventStatus(id: string, newStatus: Status) : Promise<void> {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     console.log('Magic change status :D', id)
   } else {
     let mutation : string = `mutation {
@@ -215,7 +215,7 @@ export async function changeEventStatus(id: string, newStatus: Status) : Promise
 }
 
 export async function changeDate(id: string, newDate: string) : Promise<void> {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     console.log('Magic edit date :D', id)
   } else {
     let mutation : string = `mutation {
@@ -243,7 +243,7 @@ export async function changeDate(id: string, newDate: string) : Promise<void> {
 
 
 export async function changeHours(id: string, newStartHour: string, newEndHour: string) : Promise<void> {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     console.log('Magic edit hours :D', id)
   } else {
     let mutation : string = `mutation {
@@ -274,7 +274,7 @@ export async function changeHours(id: string, newStartHour: string, newEndHour: 
 }
 
 export async function changeProvider(event: Event, provider: Service, newCost: number) {
-  if (!shouldMockApis()) {
+  if (shouldMockApis()) {
     console.log('Magic edit Provider :D', event)
   } else {
     let mutation = `mutation {
