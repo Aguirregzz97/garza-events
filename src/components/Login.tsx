@@ -126,14 +126,15 @@ export class Login extends React.Component<Props, State> {
     })
   }
 
-  submittedForm = async (_event: React.FormEvent<HTMLFormElement>) => {
+  submittedForm = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     if (await loginApi(this.state.loginForm)) {
       await successLogin('Login correcto!')
       this.setState({
         loginSucces: true
       })
     } else {
-      errorDialog('Login incorrecto, intenta de nuevo')
+      await errorDialog('Login incorrecto, intenta de nuevo')
     }
   }
 
