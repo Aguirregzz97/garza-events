@@ -5,6 +5,7 @@ import { Event, Status, Service } from '../shared/types'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import sweetalert2, { SweetAlertResult } from 'sweetalert2'
+import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip'
 
 const BigContainer = styled.div`
   padding-bottom: 50px;
@@ -162,8 +163,8 @@ interface Props extends RouteComponentProps<MatchParams> {
 }
 
 export interface RouteComponentProps<P> {
-match: match<P>
-staticContext?: any
+  match: match<P>
+  staticContext?: any
 }
 
 export interface match<P> {
@@ -232,11 +233,11 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
-  editDate = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
+  editDate = (event: Event) => async (_event: React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
     if (editValue.value) {
       await changeDate(this.props.match.params._id, editValue.value)
-      const newEvent : Event = event
+      const newEvent: Event = event
       newEvent.date = editValue.value
       this.setState({
         event: newEvent
@@ -244,11 +245,11 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
-  editStartHour = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
+  editStartHour = (event: Event) => async (_event: React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
     if (editValue.value) {
       await changeHours(this.props.match.params._id, editValue.value, event.endHour)
-      const newEvent : Event = event
+      const newEvent: Event = event
       newEvent.startHour = editValue.value
       this.setState({
         event: newEvent
@@ -256,12 +257,12 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
-  editProviderCost = (event: Event, provider: Service) => async (_event : React.MouseEvent<HTMLElement>) => {
+  editProviderCost = (event: Event, provider: Service) => async (_event: React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
     if (editValue.value) {
       await changeProvider(event, provider, editValue.value)
-      const newEvent : Event = event
-      let index : number = 0
+      const newEvent: Event = event
+      let index: number = 0
       for (let i = 0; i < event.providers.length; i++) {
         if (event.providers[i]._id == provider._id) break
         index++
@@ -272,12 +273,12 @@ export class EventC extends React.Component<Props, State> {
       })
     }
   }
- 
-  editEndHour = (event: Event) => async (_event : React.MouseEvent<HTMLElement>) => {
+
+  editEndHour = (event: Event) => async (_event: React.MouseEvent<HTMLElement>) => {
     const editValue = await this.editDialog()
     if (editValue.value) {
       await changeHours(this.props.match.params._id, event.startHour, editValue.value)
-      const newEvent : Event = event
+      const newEvent: Event = event
       newEvent.endHour = editValue.value
       this.setState({
         event: newEvent
@@ -299,67 +300,79 @@ export class EventC extends React.Component<Props, State> {
 
   render() {
     if (this.state.event === undefined) {
-      return ( <RingLoaderWrapper /> )
+      return (<RingLoaderWrapper />)
     }
     const event: Event = this.state.event
     return (
       <BigContainer>
-          <UpperDiv>
-            <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
+        <UpperDiv>
+        <TooltipHost
+            content='Events'
+            calloutProps={{ gapSpace: -10 }}
+            styles={{ root: { display: 'inline-block' } }}
+        >
+          <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
+        </TooltipHost>
+          <TooltipHost
+            content='Log out'
+            calloutProps={{ gapSpace: -10 }}
+            styles={{ root: { display: 'inline-block' } }}
+          >
             <PowerIcon onClick={this.logOut} className='fas fa-power-off'></PowerIcon>
-          </UpperDiv>
-          <ContainerBox>
+          </TooltipHost>
+        </UpperDiv>
+        <ContainerBox>
           <EventBox>
             <EventHeadingDiv>
               <h1 style={{ visibility: 'hidden' }}>yes</h1>
               <EventHeading>Event</EventHeading>
               <DeleteEditDiv>
-                <ThrashIcon onClick={ this.deleteEvent } className='fas fa-trash-alt'></ThrashIcon>
+                <ThrashIcon onClick={this.deleteEvent} className='fas fa-trash-alt'></ThrashIcon>
               </DeleteEditDiv>
             </EventHeadingDiv>
-              <ul className='list-group'>
-                <li style={{ display: 'inline-block' }} className='list-group-item'>
-                  <EventAtt>Client Name: {event.clientName}</EventAtt>
-                </li>
-                <li className='list-group-item'>
-                  <EventAtt>Address: {event.address}</EventAtt>
-                </li>
-                <li className='list-group-item'>
-                  <EventAtt>Cellphone: {event.cellphone}</EventAtt>
-                </li>
-                <li className='list-group-item'>
-                  <EventAtt>Date: {event.date}</EventAtt>
-                  <EditIcon onClick={ this.editDate(event) } className='fas fa-edit'></EditIcon>
-                </li>
-                <li className='list-group-item'>
-                  <EventAtt>Start Hour: {event.startHour}</EventAtt>
-                  <EditIcon onClick={ this.editStartHour(event) } className='fas fa-edit'></EditIcon>
-                </li>
-                <li className='list-group-item'>
-                  <EventAtt>End Hour: {event.endHour}</EventAtt>
-                  <EditIcon onClick={ this.editEndHour(event) } className='fas fa-edit'></EditIcon>
-                </li>
-                <li className='list-group-item'><EventAtt>Total Price: {event.totalPrice}</EventAtt></li>
-              </ul>
-              <ProviderAtt>Providers: </ProviderAtt>
-                <ul>
-                  {event.providers.map(element => {
-                    return (
-                      <div>
-                        <li><EventAtt>{element.service}</EventAtt></li>
-                        <ul>
-                          <li><EventAtt>Description: <strong>{element.description}</strong></EventAtt></li>
-                          <li>
-                            <EventAtt>Cost: {element.priceProvider == undefined ? "No se ha agregado un costo!" : element.priceProvider}<EditIconCost onClick={ this.editProviderCost(event, element) } className='fas fa-edit'></EditIconCost></EventAtt>
-                          </li>
-                          <li><EventAtt>Notes: {element.notes}</EventAtt></li>
-                          <li><EventAtt>Price Client: {element.priceClient}</EventAtt></li>
-                        </ul>
-                      </div>
-                    )
-                  })}
-                </ul>
-                <div style={{ display: 'flex', justifyContent: 'center' }} className='text-center'><SubmitButton onClick={this.acceptEvent}>Confirm Event</SubmitButton></div>
+            <ul className='list-group'>
+              <li style={{ display: 'inline-block' }} className='list-group-item'>
+                <EventAtt>Client Name: {event.clientName}</EventAtt>
+              </li>
+              <li className='list-group-item'>
+                <EventAtt>Address: {event.address}</EventAtt>
+              </li>
+              <li className='list-group-item'>
+                <EventAtt>Cellphone: {event.cellphone}</EventAtt>
+              </li>
+              <li className='list-group-item'>
+                <EventAtt>Date: {event.date}</EventAtt>
+                <EditIcon onClick={this.editDate(event)} className='fas fa-edit'></EditIcon>
+              </li>
+              <li className='list-group-item'>
+                <EventAtt>Start Hour: {event.startHour}</EventAtt>
+                <EditIcon onClick={this.editStartHour(event)} className='fas fa-edit'></EditIcon>
+              </li>
+              <li className='list-group-item'>
+                <EventAtt>End Hour: {event.endHour}</EventAtt>
+                <EditIcon onClick={this.editEndHour(event)} className='fas fa-edit'></EditIcon>
+              </li>
+              <li className='list-group-item'><EventAtt>Total Price: {event.totalPrice}</EventAtt></li>
+            </ul>
+            <ProviderAtt>Providers: </ProviderAtt>
+            <ul>
+              {event.providers.map(element => {
+                return (
+                  <div>
+                    <li><EventAtt>{element.service}</EventAtt></li>
+                    <ul>
+                      <li><EventAtt>Description: <strong>{element.description}</strong></EventAtt></li>
+                      <li>
+                        <EventAtt>Cost: {element.priceProvider == undefined ? "No se ha agregado un costo!" : element.priceProvider}<EditIconCost onClick={this.editProviderCost(event, element)} className='fas fa-edit'></EditIconCost></EventAtt>
+                      </li>
+                      <li><EventAtt>Notes: {element.notes}</EventAtt></li>
+                      <li><EventAtt>Price Client: {element.priceClient}</EventAtt></li>
+                    </ul>
+                  </div>
+                )
+              })}
+            </ul>
+            <div style={{ display: 'flex', justifyContent: 'center' }} className='text-center'><SubmitButton onClick={this.acceptEvent}>Confirm Event</SubmitButton></div>
           </EventBox>
         </ContainerBox>
       </BigContainer>
