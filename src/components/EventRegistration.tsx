@@ -4,6 +4,8 @@ import DayPickerInput from 'react-day-picker/DayPickerInput'
 import 'react-day-picker/lib/style.css'
 import styled from 'styled-components'
 import { getServices, postEvent } from '../shared/RestApi'
+import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   background: linear-gradient(20deg, rgba(11,65,99,1) 20%, rgba(11,90,100,1) 65%, rgba(11,110,100,1) 100%);
@@ -16,6 +18,23 @@ const ContainerThanks = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`
+
+const UpperDiv = styled.div`
+  display: block;
+`
+
+const ArrowIcon = styled.div`
+  color: white;
+  font-size: 50px;
+  margin-top: 20px;
+  margin-left: 20px;  
+
+  &:hover {
+    cursor: pointer;
+    color: gray;   
+    transform: scale(1.08); 
+  }
 `
 
 const IconThanks = styled.i`
@@ -299,6 +318,15 @@ export class EventRegistration extends React.Component<Props, State> {
     }
     return ( 
       <Container>
+        <UpperDiv>
+        <TooltipHost
+            content='Login'
+            calloutProps={{ gapSpace: -10 }}
+            styles={{ root: { display: 'inline-block' } }}
+        >
+          <Link to='/'><ArrowIcon className="fas fa-arrow-left"></ArrowIcon></Link>
+        </TooltipHost>
+        </UpperDiv>
         <EventRegistrationContainer>
           <FormRect>
             <HeadingForms>Registro de evento</HeadingForms>

@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { SpringGrid, makeResponsive } from 'react-stonecutter'
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip'
+//import { element } from 'prop-types'
 
 const GridPage = makeResponsive(SpringGrid, { maxWidth: 1920 })
 
