@@ -382,7 +382,8 @@ export class EventC extends React.Component<Props, State> {
     }
   }
 
-  acceptEvent = async () => {
+  acceptEvent = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
     const res = await this.areYouSureAcceptDialog()
     if (res.value) {
       await changeEventStatus(this.props.match.params._id, Status.ACCEPTED)

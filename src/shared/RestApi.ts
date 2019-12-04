@@ -31,7 +31,7 @@ export function redirectToLogin() {
 }
 
 export function redirectToEvents() {
-  window.location.href = '/events'
+  window.location.href = '/#/events'
 }
 
 export async function loginApi(loginForm: LoginForm) : Promise<boolean> {
