@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { SpringGrid, makeResponsive } from 'react-stonecutter'
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip'
+//import { element } from 'prop-types'
 
 const GridPage = makeResponsive(SpringGrid, { maxWidth: 1920 })
 
@@ -15,7 +16,7 @@ const ContainerBox = styled.div`
 `
 
 const EventsHeadingDiv = styled.div`
-  display: flex;
+  display: block;
   justify-content: space-between;]
 `
 
@@ -33,9 +34,22 @@ const EventsHeading = styled.div`
 
 const FilterIconsDiv = styled.div`
   display: flex;
-  align-items: center;
-  width: 180px;
-  padding-right: 5%;
+  justify-content: center;  
+  width: 100%;  
+`
+
+const AllIconFilter = styled.i`
+  margin-right: 10px;
+  color: white;
+  font-size: 33px;
+  background: none;
+  border: none;
+  transition: 0.3s;
+
+  &:hover {
+    transform: scale(1.08);
+    cursor: pointer;
+  }
 `
 
 const CheckIconFilter = styled.i`
@@ -78,37 +92,28 @@ const CancelIconFilter = styled.i`
   }
 `
 
-
 const UpperDiv = styled.div`
   display: flex;
   justify-content: space-between;
 `
 
-const HomeIcon = styled.div`
-  color: white;
-  font-size: 65px;
-  margin: 20px;
-  margin-bottom: 20px;
-
-  &:hover {
-    cursor: pointer;
-  }
-`
-
 const PowerIcon = styled.div`
   color: white;
-  font-size: 65px;
+  font-size: 50px;
   margin: 20px;
   margin-bottom: 20px;
 
   &:hover {
     cursor: pointer;
+    color: gray;   
+    transform: scale(1.08); 
   }
 `
 
 const ContainerContainerEvents = styled.div`
-  min-height: 100vh;
+  min-height: 73vh;
   display: flex;
+  padding-top : 2.5%;  
   padding-left: 5%;
   padding-right: 5%;
 `
@@ -197,6 +202,18 @@ export class Events extends React.Component<Props, State> {
     })
   }
 
+  filterAll = () => {
+    if(this.state.events == undefined) {
+      return
+    }
+    let eventsToShow: Event[] = this.state.events.filter((element) => {
+      return (element.status === 'ACCEPTED' || element.status === 'PENDING')
+    })
+    this.setState({
+      eventsToShow: eventsToShow,
+    })
+  }
+
   filterToAccepted = () => {
     this.filterGeneric('ACCEPTED')
   }
@@ -223,13 +240,6 @@ export class Events extends React.Component<Props, State> {
         <ContainerBox>
           <UpperDiv>
             <TooltipHost
-              content='Events'
-              calloutProps={{ gapSpace: -10 }}
-              styles={{ root: { display: 'inline-block' } }}
-            >
-              <Link to='/'><HomeIcon className="fas fa-home"></HomeIcon></Link>
-            </TooltipHost>
-            <TooltipHost
               content='Log out'
               calloutProps={{ gapSpace: -10 }}
               styles={{ root: { display: 'inline-block' } }}
@@ -239,24 +249,31 @@ export class Events extends React.Component<Props, State> {
           </UpperDiv>
           <EventsHeadingDiv>
             <InvDiv></InvDiv>
-            <EventsHeading>Events</EventsHeading>
+            <EventsHeading>Events</EventsHeading>            
             <FilterIconsDiv>
+            <TooltipHost
+                content='display all events'
+                calloutProps={{ gapSpace: 0 }}
+                styles={{ root: { display: 'inline-block' } }}
+              >
+                <AllIconFilter onClick={this.filterAll} className='fa fa-plus-square'></AllIconFilter>
+              </TooltipHost>
               <TooltipHost
-                content='display accepted'
+                content='display accepted events'
                 calloutProps={{ gapSpace: 0 }}
                 styles={{ root: { display: 'inline-block' } }}
               >
                 <CheckIconFilter onClick={this.filterToAccepted} className='fas fa-check-circle'></CheckIconFilter>
               </TooltipHost>
               <TooltipHost
-                content='display pending'
+                content='display pending events'
                 calloutProps={{ gapSpace: 0 }}
                 styles={{ root: { display: 'inline-block' } }}
               >
                 <CrossIconFilter onClick={this.filterToPending} className='fas fa-pause-circle'></CrossIconFilter>
               </TooltipHost>
               <TooltipHost
-                content='display cancelled'
+                content='display cancelled events'
                 calloutProps={{ gapSpace: 0 }}
                 styles={{ root: { display: 'inline-block' } }}
               >
@@ -276,8 +293,8 @@ export class Events extends React.Component<Props, State> {
             >
               {this.state.eventsToShow.map((element: Event) => {
                 return (
-                  <div key={element.clientName} className='text-center'>
-                    <Link to={'/event/' + element._id} ><CalendarIcon className='fas fa-calendar-day'></CalendarIcon></Link>
+                  <div key={element.clientName} className='text-center'>                    
+                    {element.status === 'ACCEPTED' ? <Link to={'/event/' + element._id} ><CalendarIcon className='fas fa-calendar-check'></CalendarIcon></Link> : element.status === 'PENDING' ? <Link to={'/event/' + element._id} ><CalendarIcon className='fas fa-calendar-minus'></CalendarIcon></Link> : <Link to={'/event/' + element._id} ><CalendarIcon className='fas fa-calendar-times'></CalendarIcon></Link> }
                     <ClientName>{element.clientName}</ClientName>
                     {element.status === 'ACCEPTED' ? <CheckIcon className='fas fa-check-circle'></CheckIcon> : element.status === 'PENDING' ? <CrossIcon className='fas fa-pause-circle'></CrossIcon> : <DeleteIcon className='fas fa-times-circle'></DeleteIcon>}
                   </div>
