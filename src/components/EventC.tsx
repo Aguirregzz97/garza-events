@@ -348,6 +348,7 @@ export class EventC extends React.Component<Props, State> {
                       <div>
                         <li><EventAtt>{element.service}</EventAtt></li>
                         <ul>
+                          <li><EventAtt>Description: <strong>{element.description}</strong></EventAtt></li>
                           <li>
                             <EventAtt>Cost: {element.priceProvider == undefined ? "No se ha agregado un costo!" : element.priceProvider}<EditIconCost onClick={ this.editProviderCost(event, element) } className='fas fa-edit'></EditIconCost></EventAtt>
                           </li>

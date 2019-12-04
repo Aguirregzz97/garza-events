@@ -79,7 +79,7 @@ export async function postEvent(event: Event) : Promise<void> {
   } else {
     let servicesClient : ServiceClient[] = []
     for (const provider of event.providers) {
-      if (provider.instalationHour === "") continue
+      if (provider.description === "") continue
       let serviceClient : ServiceClient = {
         service: provider.type,
         notes: provider.notes,
@@ -167,7 +167,7 @@ export async function getEvent(id: string) {
           'Authorization': `${localStorage.getItem('token')}`, 
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { _id clientName date startHour endHour cellphone address totalPrice providers { _id priceClient notes installationHour service priceProvider } status } }` }),
+        body: JSON.stringify({ query: `{ getEvent(eventID: \"${id}\") { _id clientName date startHour endHour cellphone address totalPrice providers { _id priceClient notes installationHour service priceProvider description } status } }` }),
       })
       const res : IGraphqlDataResponse<IGetEventResponseData> = await response.json()
       return res.data.getEvent
@@ -267,7 +267,6 @@ export async function changeHours(id: string, newStartHour: string, newEndHour: 
 }
 
 export async function changeProvider(event: Event, provider: Service, newCost: number) {
-  console.log(newCost)
   if (shouldMockApis()) {
     console.log('Magic edit Provider :D', event)
   } else {
