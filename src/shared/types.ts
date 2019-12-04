@@ -50,7 +50,7 @@ export type LoginForm = {
 }
 
 export enum Status {
-  PENDING = 'PEDNING',
+  PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
   CANCELLED = 'CANCELLED'
 }

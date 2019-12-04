@@ -19,11 +19,12 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 80%;
+  height: 70%;
   width: 450px;
   background: #fff;
   border-radius: 3px;
   overflow: hidden;
+  box-shadow: 5px 8px 8px 5px rgba(0,0,0,0.2);  
 
   @media only screen and (max-width: 520px) {
     width: 320px;
@@ -87,9 +88,18 @@ const LoginBtn = styled.button`
 
   &:hover {
     cursor: pointer;
-    background: #333333;
+    background: #1a8f6e;
   }
 `
+
+const LinkToRegister = styled.a`
+  margin-top: 5%;
+  color: #0B4163
+  -o-transition: all .4s;
+  -moz-transition: all .4s;
+  transition: all .4s;
+`
+
 
 type State = {
   loginForm: LoginForm,
@@ -149,9 +159,10 @@ export class Login extends React.Component<Props, State> {
           <Box>
             <HeadingLogin>Login</HeadingLogin>
             <InputUsername onChange={ this.handleInputChange('username') } placeholder='username' />
-            <InputPassword type='password' onChange={ this.handleInputChange('password') } placeholder='password'></InputPassword>
+            <InputPassword type='password' onChange={ this.handleInputChange('password') } placeholder='password'></InputPassword>            
             <LoginBtn>Login</LoginBtn>
-            <img style={{ width: '60px', marginTop: '40px' }} src={userImage} alt=""/>
+            <LinkToRegister href="#/event-registration">Quiero registrar un evento</LinkToRegister>
+            <img style={{ width: '60px', marginTop: '20px' }} src={userImage} alt=""/>
           </Box>
         </Container>
       </form>

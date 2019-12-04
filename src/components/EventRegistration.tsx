@@ -51,7 +51,6 @@ const FormRect = styled.div`
   padding-right: 50px;
   padding-left: 50px;
   position: sticky;
-
   @media only screen and (max-width: 700px) {
     width: 90%;
   } 
@@ -60,7 +59,6 @@ const HeadingForms = styled.h1`
   color: black;
   padding-top: 10px;
   padding-bottom: 10px;
-
   @media only screen and (max-width: 700px) {
     font-size: 30px;
   } 
@@ -82,7 +80,6 @@ const SubmitButton = styled.button`
   -o-transition: all .4s;
   -moz-transition: all .4s;
   transition: all .4s;
-
   &:hover {
     cursor: pointer;
     background: #333333;
@@ -90,7 +87,6 @@ const SubmitButton = styled.button`
 `
 const ServicesHeading = styled.h2`
   padding-top: 10px;
-
   @media only screen and (max-width: 700px) {
     font-size: 30px;
   } 
